@@ -48,7 +48,7 @@ namespace adonet_db_videogame
 
             string query = "SELECT * FROM videogames WHERE id = @id";
             using SqlConnection connessione = new SqlConnection(connessioneDatabase);
-            
+
             try
             {
                 connessione.Open();
@@ -80,7 +80,7 @@ namespace adonet_db_videogame
                 connessione.Open();
                 SqlCommand cmd = new SqlCommand(query, connessione);
                 cmd.Parameters.AddWithValue("@nome", "%" + name + "%");
-                
+
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
@@ -97,24 +97,26 @@ namespace adonet_db_videogame
 
         public static void Delete(int id)
         {
-            using SqlConnection connessione = new SqlConnection(connessioneDatabase);
-
-            try
+            using (SqlConnection connessione = new SqlConnection(connessioneDatabase))
             {
-                connessione.Open();
+                try
+                {
+                    connessione.Open();
+                    
+                    string query = "DELETE FROM videogames where id = @id";
+                    using (SqlCommand cmd = new SqlCommand(query, connessione))
+                    {
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+                        cmd.ExecuteNonQuery();
+                    }
 
-                string query = @"DELETE FROM videogames WHERE id = @id;";
-
-                using SqlCommand cmd = new SqlCommand(query, connessione);
-                cmd.Parameters.Add(new SqlParameter("@id", id));
-
-                cmd.ExecuteNonQuery();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
+                    Console.WriteLine("Videogioco eliminato con successo!");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
             }
         }
-
     }
 }
